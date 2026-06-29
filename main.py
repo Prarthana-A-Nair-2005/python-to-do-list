@@ -85,16 +85,77 @@ def delete_task():
 
 
 load_tasks()
+def view_statistics():
+    total_tasks = len(tasks)
 
+    completed_tasks = 0
 
+    for task in tasks:
+        if task.startswith("✅"):
+            completed_tasks += 1
+
+    pending_tasks = total_tasks - completed_tasks
+
+    print("\n===== TASK STATISTICS =====")
+    print(f"Total Tasks      : {total_tasks}")
+    print(f"Completed Tasks  : {completed_tasks}")
+    print(f"Pending Tasks    : {pending_tasks}")
+
+def search_tasks():
+    if len(tasks) == 0:
+        print("No tasks available.")
+        return
+
+    keyword = input("Enter a keyword to search: ").lower()
+
+    found = False
+
+    print("\n===== SEARCH RESULTS =====")
+
+    for i, task in enumerate(tasks, start=1):
+        if keyword in task.lower():
+            print(f"{i}. {task}")
+            found = True
+
+    if not found:
+        print("No matching tasks found.")
+def edit_task():
+    if len(tasks) == 0:
+        print("No tasks available.")
+        return
+
+    view_tasks()
+
+    try:
+        task_number = int(input("Enter the task number to edit: "))
+
+        if 1 <= task_number <= len(tasks):
+            new_task = input("Enter the new task: ")
+
+            # Keep the completed status if it exists
+            if tasks[task_number - 1].startswith("✅"):
+                tasks[task_number - 1] = "✅ " + new_task
+            else:
+                tasks[task_number - 1] = new_task
+
+            save_tasks()
+            print("Task updated successfully!")
+
+        else:
+            print("Invalid task number.")
+
+    except ValueError:
+        print("Please enter a valid number.")
 while True:
     print("\n========== TO-DO LIST ==========")
     print("1. View Tasks")
     print("2. Add Task")
     print("3. Mark Task as Completed")
     print("4. Delete Task")
-    print("5. Exit")
-
+    print("5. view statistics")
+    print("6. search tasks")
+    print("7. Edit Task")
+    print("8. Exit")
     choice = input("Enter your choice: ")
 
     if choice == "1":
@@ -109,9 +170,16 @@ while True:
     elif choice == "4":
         delete_task()
 
+   
     elif choice == "5":
+        view_statistics()
+    elif choice == "6":
+        search_tasks()
+    elif choice == "7":
+        edit_task()
+    elif choice == "8":
         print("Thank you for using the To-Do List!")
         break
 
     else:
-        print("Invalid choice! Please enter a number from 1 to 5.")
+        print("Invalid choice! Please enter a number from 1 to 8.")
