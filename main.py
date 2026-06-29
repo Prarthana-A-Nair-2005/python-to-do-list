@@ -1,6 +1,28 @@
 tasks = []
 
 
+def save_tasks():
+    file = open("tasks.txt", "w")
+
+    for task in tasks:
+        file.write(task + "\n")
+
+    file.close()
+
+
+def load_tasks():
+    try:
+        file = open("tasks.txt", "r")
+
+        for line in file:
+            tasks.append(line.strip())
+
+        file.close()
+
+    except FileNotFoundError:
+        pass
+
+
 def view_tasks():
     if len(tasks) == 0:
         print("No tasks available.")
@@ -13,6 +35,7 @@ def view_tasks():
 def add_task():
     task = input("Enter the task: ")
     tasks.append(task)
+    save_tasks()
     print("Task added successfully!")
 
 
@@ -22,13 +45,22 @@ def mark_task_completed():
     else:
         view_tasks()
 
-        task_number = int(input("Enter the task number to mark as completed: "))
+        try:
+            task_number = int(input("Enter the task number to mark as completed: "))
 
-        if 1 <= task_number <= len(tasks):
-            tasks[task_number - 1] = "✅ " + tasks[task_number - 1]
-            print("Task marked as completed!")
-        else:
-            print("Invalid task number.")
+            if 1 <= task_number <= len(tasks):
+                if tasks[task_number - 1].startswith("✅"):
+                    print("Task is already completed.")
+                else:
+                    tasks[task_number - 1] = "✅ " + tasks[task_number - 1]
+                    save_tasks()
+                    print("Task marked as completed!")
+
+            else:
+                print("Invalid task number.")
+
+        except ValueError:
+            print("Please enter a valid number.")
 
 
 def delete_task():
@@ -37,17 +69,26 @@ def delete_task():
     else:
         view_tasks()
 
-        task_number = int(input("Enter the task number to delete: "))
+        try:
+            task_number = int(input("Enter the task number to delete: "))
 
-        if 1 <= task_number <= len(tasks):
-            deleted_task = tasks.pop(task_number - 1)
-            print(f"'{deleted_task}' deleted successfully!")
-        else:
-            print("Invalid task number.")
+            if 1 <= task_number <= len(tasks):
+                deleted_task = tasks.pop(task_number - 1)
+                save_tasks()
+                print(f"'{deleted_task}' deleted successfully!")
+
+            else:
+                print("Invalid task number.")
+
+        except ValueError:
+            print("Please enter a valid number.")
+
+
+load_tasks()
 
 
 while True:
-    print("\n===== TO-DO LIST =====")
+    print("\n========== TO-DO LIST ==========")
     print("1. View Tasks")
     print("2. Add Task")
     print("3. Mark Task as Completed")
@@ -69,7 +110,7 @@ while True:
         delete_task()
 
     elif choice == "5":
-        print("Goodbye!")
+        print("Thank you for using the To-Do List!")
         break
 
     else:
